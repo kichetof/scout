@@ -23,7 +23,7 @@ class ScoutServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/scout.php', 'scout');
 
         if (class_exists(Meilisearch::class)) {
-            $this->app->singleton(Meilisearch::class, function ($app) {
+            $this->app->bind(Meilisearch::class, function ($app) {
                 $config = $app['config']->get('scout.meilisearch');
 
                 return new Meilisearch(
@@ -34,7 +34,7 @@ class ScoutServiceProvider extends ServiceProvider
             });
         }
 
-        $this->app->singleton(EngineManager::class, function ($app) {
+        $this->app->bind(EngineManager::class, function ($app) {
             return new EngineManager($app);
         });
     }
