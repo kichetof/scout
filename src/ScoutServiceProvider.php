@@ -2,6 +2,7 @@
 
 namespace Laravel\Scout;
 
+use Illuminate\Container\Container;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Scout\Console\DeleteAllIndexesCommand;
 use Laravel\Scout\Console\DeleteIndexCommand;
@@ -23,8 +24,8 @@ class ScoutServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/scout.php', 'scout');
 
         if (class_exists(Meilisearch::class)) {
-            $this->app->bind(Meilisearch::class, function ($app) {
-                $config = $app['config']->get('scout.meilisearch');
+            $this->app->singleton(Meilisearch::class, function () {
+                $config = Container::getInstance()->make('config')->get('scout.meilisearch');
 
                 return new Meilisearch(
                     $config['host'],
@@ -34,8 +35,8 @@ class ScoutServiceProvider extends ServiceProvider
             });
         }
 
-        $this->app->bind(EngineManager::class, function ($app) {
-            return new EngineManager($app);
+        $this->app->singleton(EngineManager::class, function () {
+            return new EngineManager(Container::getInstance());
         });
     }
 
